@@ -14,4 +14,10 @@
     <ProjectReference Include="..\CountryGwp.Domain\CountryGwp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\gwpByCountry.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

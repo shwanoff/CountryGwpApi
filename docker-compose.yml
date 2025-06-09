@@ -1,0 +1,8 @@
+services:
+  countrygwpapi:
+    image: ${DOCKER_REGISTRY-}countrygwpapi
+    build:
+      context: .
+      dockerfile: CountryGwpApi/Dockerfile
+    ports:
+        - "9091:9091"

@@ -10,11 +10,11 @@ public class CalculateAvgGwpUseCase(IGwpRepository repository) : ICalculateAvgGw
 
 	public async Task<AvgGwpResponseDto> HandleAsync(AvgGwpRequestDto request, CancellationToken cancellationToken = default)
 	{
-		var records = await _repository.GetByCountryAndLobsAsync(request.Country, request.Lobs, cancellationToken);
+		var records = await _repository.GetByCountryAndLobsAsync(request.Country, request.Lob, cancellationToken);
 
 		var result = new AvgGwpResponseDto();
 
-		foreach (var lob in request.Lobs)
+		foreach (var lob in request.Lob)
 		{
 			var avg = records
 				.Where(r => r.LineOfBusiness.Value == lob)
@@ -34,7 +34,7 @@ public class CalculateAvgGwpUseCase(IGwpRepository repository) : ICalculateAvgGw
 				.DefaultIfEmpty(0)
 				.Average();
 
-			result[lob] = Math.Round(avg, 2);
+			result[lob] = Math.Round(avg, 1);
 		}
 
 		return result;
