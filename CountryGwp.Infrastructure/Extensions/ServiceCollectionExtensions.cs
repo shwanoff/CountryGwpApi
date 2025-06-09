@@ -17,7 +17,9 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, string csvFilePath)
     {
-        var records = Services.CsvLoader.Load(csvFilePath);
+        ArgumentException.ThrowIfNullOrEmpty(csvFilePath, nameof(csvFilePath));
+
+		var records = Services.CsvLoader.Load(csvFilePath);
         services.AddSingleton<IGwpRepository>(new GwpRepository(records));
         return services;
     }

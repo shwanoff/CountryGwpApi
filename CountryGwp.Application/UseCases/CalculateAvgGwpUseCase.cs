@@ -23,6 +23,8 @@ public class CalculateAvgGwpUseCase(IGwpRepository repository) : ICalculateAvgGw
     /// </returns>
     public async Task<AvgGwpResponseDto> HandleAsync(AvgGwpRequestDto request, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(request, nameof(request));
+        
         var records = await _repository.GetByCountryAndLobsAsync(request.Country, request.Lob, cancellationToken);
 
         var result = new AvgGwpResponseDto();

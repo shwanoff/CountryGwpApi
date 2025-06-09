@@ -19,7 +19,12 @@ public static class CsvLoader
     /// </returns>
     public static IEnumerable<GwpRecord> Load(string filePath)
     {
-        var records = new List<GwpRecord>();
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath, nameof(filePath));
+
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException($"The specified file does not exist: {filePath}");
+
+		var records = new List<GwpRecord>();
         var lines = File.ReadAllLines(filePath);
         if (lines.Length < 2)
             return records;

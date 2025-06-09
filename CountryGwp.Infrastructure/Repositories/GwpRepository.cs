@@ -17,7 +17,8 @@ public class GwpRepository : IGwpRepository
     /// <param name="records">The collection of GWP records to store in memory.</param>
     public GwpRepository(IEnumerable<GwpRecord> records)
     {
-        _records = records.ToList();
+        ArgumentNullException.ThrowIfNull(records, nameof(records));
+		_records = [.. records];
     }
 
     /// <summary>
@@ -31,7 +32,10 @@ public class GwpRepository : IGwpRepository
     /// </returns>
     public Task<IEnumerable<GwpRecord>> GetByCountryAndLobsAsync(string country, IEnumerable<string> lobs, CancellationToken cancellationToken = default)
     {
-        var lobsSet = new HashSet<string>(lobs, StringComparer.OrdinalIgnoreCase);
+        ArgumentException.ThrowIfNullOrWhiteSpace(country, nameof(country));
+        ArgumentNullException.ThrowIfNull(lobs, nameof(lobs));
+
+		var lobsSet = new HashSet<string>(lobs, StringComparer.OrdinalIgnoreCase);
         var result = _records
             .Where(r => r.Country.Value.Equals(country, StringComparison.OrdinalIgnoreCase)
                         && lobsSet.Contains(r.LineOfBusiness.Value))
