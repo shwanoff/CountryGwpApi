@@ -1,4 +1,5 @@
 ﻿using CountryGwp.Domain.Interfaces;
+using CountryGwp.Infrastructure.Caching;
 using CountryGwp.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtensions
 
 		var records = Services.CsvLoader.Load(csvFilePath);
         services.AddSingleton<IGwpRepository>(new GwpRepository(records));
-        return services;
+		services.AddSingleton<IGwpCache, GwpCache>();
+		return services;
     }
 }
