@@ -1,0 +1,42 @@
+﻿using CountryGwp.Application.Dto;
+using CountryGwp.Application.Interfaces;
+using CountryGwp.Domain.Interfaces;
+
+namespace CountryGwp.Application.UseCases;
+
+public class CalculateAvgGwpUseCase(IGwpRepository repository) : ICalculateAvgGwpUseCase
+{
+	private readonly IGwpRepository _repository = repository;
+
+	public async Task<AvgGwpResponseDto> HandleAsync(AvgGwpRequestDto request, CancellationToken cancellationToken = default)
+	{
+		var records = await _repository.GetByCountryAndLobsAsync(request.Country, request.Lobs, cancellationToken);
+
+		var result = new AvgGwpResponseDto();
+
+		foreach (var lob in request.Lobs)
+		{
+			var avg = records
+				.Where(r => r.LineOfBusiness.Value == lob)
+				.SelectMany(r => r.YearlyGwp.Values
+					.Where(y =>
+					{
+						// TODO: should change type from string to int in YearlyGwp.Values
+						if (y.Key.Length == 5 && y.Key.StartsWith("Y") && int.TryParse(y.Key[1..], out var year))
+						{
+							return year >= request.FromYear && year <= request.ToYear;
+						}
+						return false;
+					})
+					.Select(y => y.Value))
+				.Where(v => v.HasValue)
+				.Select(v => v!.Value)
+				.DefaultIfEmpty(0)
+				.Average();
+
+			result[lob] = Math.Round(avg, 2);
+		}
+
+		return result;
+	}
+}
